@@ -27,8 +27,8 @@ For this app we want users to be able to visualize crime data in an interactive 
 
 **Tab One**: Displays a map of the United States where that the features can be controlled by a time lapse bar. You will be able to select a feature and then move the time bar to show the values over different years. The size of the point will be mapped to the value of the feature, higher values will be a larger circle. This allows you to see how the rates change over time and also allows you to make comparison across the country. The panel will contain a slide bar to control the year that is currently being displayed on the map. There will be a method to select one of our six features which include population per 100k people, homicide per 100k people, rape per 100k people, robbery per 100k people, aggravated assault per 100k people and violent crime per 100k people. 
 
-![](sketch_map.png)
+![](sketch_map.jpg)
 
 **Tab Two**: Time line plots for all six of the features filtered by city, where city will be selected in the side panel. This panel will help users make comparisons among the different types of crime for a single city and can see how each feature contributes to violent crimes. There will be a table that lists each feature(homicide, robbery, etc.) and compares the city to the national average value for that feature per year, the year will be selected from time bar. 
 
-![](sketch_line_table.png)
+![](sketch_line_table.jpg)
