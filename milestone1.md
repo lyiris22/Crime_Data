@@ -32,3 +32,11 @@ For this app we want users to be able to visualize crime data in an interactive 
 **Tab Two**: Time line plots for all six of the features filtered by city, where city will be selected in the side panel. This panel will help users make comparisons among the different types of crime for a single city and can see how each feature contributes to violent crimes. There will be a table that lists each feature(homicide, robbery, etc.) and compares the city to the national average value for that feature per year, the year will be selected from time bar. 
 
 ![](sketch_line_table.jpg)
+
+
+### References
+- Data set: Marshall Project, [The FBI's Uniform Crime Reporting Program](https://github.com/themarshallproject/city-crime)
+- US Map: [United States of America](https://freevectormaps.com/united-states/US-EPS-01-0001?ref=atr) - Single Color by [FreeVectorMaps.com](https://freevectormaps.com/?ref=atr)
+- Radio button, Favorites selection, Computer Slider Tool: Made by [Freepik](https://www.flaticon.com/authors/freepik) from www.flaticon.com
+- Placeholder: Made by [Smashicons](https://www.flaticon.com/authors/smashicons) from www.flaticon.com
+
