@@ -11,16 +11,6 @@ library(shiny)
 library(tidyverse)
 library(geocode)
 
-crime = read_csv('data/ucr_crime_1975_2015.csv')
-crime$department_name <- str_replace(crime$department_name,pattern=',$',replacement='')
-
-# Change department_name to 2 cols: long and lat
-  # Filter out comma and after
-  # Lookup city
-  # Manual cleaning of cities that don't work
-  
-# Fix city and county issue
-
 # Filter out unnecc columns
 
 
