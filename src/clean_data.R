@@ -36,24 +36,24 @@ crime_cleaned<- crime_cleaned %>%
 
 # ayla's work
 #google will only let use do 2500 entries a day and our data is 2829 values
-top_half_crime <- crime_cleaned[1:1500, ]
+#top_half_crime <- crime_cleaned[1:1500, ]
 
 #top_half_crime <- top_half_crime %>% 
 #  mutate_geocode(city, output = c("latlon"), source = "dsk")   #commented out because you can only do 2500 per day so only run when required 
 
 # writes top half of converted lat/longs
-write_csv(top_half_crime, 'data/top_half_lat_long.csv' )  
+#write_csv(top_half_crime, 'data/top_half_lat_long.csv' )  
 
 
 # splits data into chunks for lat/long from google maps
-bottom_half_crime <- crime_cleaned[1501:2829,]
-bottom_half_crime
+#bottom_half_crime <- crime_cleaned[1501:2778,]
+#bottom_half_crime
 
 #bottom_half_crime<- bottom_half_crime %>% 
-#  mutate_geocode(city, output = c("latlon"), source = "dsk")   #commented out because you can only do 2500 per day so only run when required
+#    mutate_geocode(city, output = c("latlon"), source = "dsk")   #commented out because you can only do 2500 per day so only run when required
 
 # writes bottom half of converted lat/longs
-write_csv(bottom_half_crime, 'data/bottom_half_lat_long.csv' )
+#write_csv(bottom_half_crime, 'data/bottom_half_lat_long.csv' )
 
 
 
@@ -91,6 +91,8 @@ crime_latlong <- crime_latlong %>%
 
 crime_latlong
 
+crime_latlong<- crime_latlong %>% 
+  filter(city != "Honolulu")
 
 
 write_csv(crime_latlong, 'data/crime_lat_long.csv' )
