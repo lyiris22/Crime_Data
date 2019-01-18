@@ -2,7 +2,7 @@ library(shiny)
 library(tidyverse)
 
 # load data
-dat <- read.csv('../data/crime_lat_long.csv')
+dat <- read.csv('data/crime_lat_long.csv')
 
 # set crimes for select box input
 crimes_list <- c("Total Crime" = "violent_per_100k",
@@ -26,7 +26,7 @@ ui <- fluidPage(
     sidebarPanel(
       # slider bar: input year
       sliderInput("year_input", "Select a year",
-                  min = 1975, max = 2015, value = 2000),
+                  min = 1975, max = 2014, value = 2000, sep=""),
       # select box: crime type
       selectInput("crime_input", "Select a crime", crimes_list),
       # select box: input city
