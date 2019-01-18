@@ -2,7 +2,8 @@ library(shiny)
 library(tidyverse)
 
 # load data
-dat <- read.csv("../data/ucr_crime_1975_2015.csv")
+dat <- read.csv('../data/crime_lat_long.csv')
+
 # set crimes for select box input
 crimes_list <- c("Total Crime" = "0",
                  "Homicide" = "1",
@@ -10,7 +11,7 @@ crimes_list <- c("Total Crime" = "0",
                  "Robbery" = "3",
                  "Aggrevated Assault" = "4")
 # get cities for select box input
-city_list <- as.list(as.vector(dat$department_name))
+city_list <- as.list(as.vector(dat$city))
 
 
 # main structure
@@ -50,7 +51,7 @@ server <- function(input, output) {
   # get city data for line chart
   single_city_dat <- reactive(
     dat %>% 
-      filter(department_name == input$city_input) %>%
+      filter(city == input$city_input) %>%
       select(year, total_pop, 
              violent_per_100k, homs_per_100k, rape_per_100k, 
              rob_per_100k, agg_ass_per_100k) %>% 
@@ -62,7 +63,7 @@ server <- function(input, output) {
     dat %>% 
       filter(year == input$year_input) %>%
       mutate(Rank = dense_rank(violent_per_100k)) %>% 
-      filter(department_name == input$city_input)
+      filter(city == input$city_input)
     )
   
   # get the average table for current year
