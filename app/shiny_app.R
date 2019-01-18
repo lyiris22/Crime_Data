@@ -2,16 +2,16 @@ library(shiny)
 library(tidyverse)
 
 # load data
-dat <- read.csv("../data/ucr_crime_1975_2015.csv")
-# set crimes for select box input
-crimes_list <- c("Total Crime" = "0",
-                 "Homicide" = "1",
-                 "Rape" = "2",
-                 "Robbery" = "3",
-                 "Aggrevated Assault" = "4")
-# get cities for select box input
-city_list <- as.list(as.vector(dat$department_name))
+dat <- read.csv('../data/crime_lat_long.csv')
 
+# set crimes for select box input
+crimes_list <- c("Total Crime" = "violent_per_100k",
+                 "Homicide" = "homs_per_100k",
+                 "Rape" = "rape_per_100k",
+                 "Robbery" = "rob_per_100k",
+                 "Aggrevated Assault" = "agg_ass_per_100k")
+# get cities for select box input
+city_list <- as.list(as.vector(dat$city))
 
 # main structure
 ui <- fluidPage(
@@ -35,7 +35,7 @@ ui <- fluidPage(
 
     mainPanel(
       tabsetPanel(
-        tabPanel(title = "Map", tableOutput("my_map")),
+        tabPanel(title = "Map", leafletOutput("mymap")),
         tabPanel(title = "Single City",
                  plotOutput("line_chart"),
                  tableOutput("percentage_table"))
@@ -50,7 +50,7 @@ server <- function(input, output) {
   # get city data for line chart
   single_city_dat <- reactive(
     dat %>% 
-      filter(department_name == input$city_input) %>%
+      filter(city == input$city_input) %>%
       select(year, total_pop, 
              violent_per_100k, homs_per_100k, rape_per_100k, 
              rob_per_100k, agg_ass_per_100k) %>% 
@@ -62,7 +62,7 @@ server <- function(input, output) {
     dat %>% 
       filter(year == input$year_input) %>%
       mutate(Rank = dense_rank(violent_per_100k)) %>% 
-      filter(department_name == input$city_input)
+      filter(city == input$city_input)
     )
   
   # get the average table for current year
@@ -75,6 +75,27 @@ server <- function(input, output) {
                 rob = mean(rob_per_100k, na.rm = TRUE),
                 agg = mean(agg_ass_per_100k, na.rm = TRUE))
     )
+  
+  #Get the size for the map circles
+  crime_circles <- reactive (
+    dat %>%
+      filter(year == input$year_input) %>% 
+      select(input$crime_input) %>% 
+      mutate(calc = (.[[1]]-mean(.[[1]],na.rm = TRUE))/sd(.[[1]],na.rm=TRUE))
+  )
+
+  
+  # Map output
+  output$mymap <- renderLeaflet({
+    leaflet(dat) %>%
+      addTiles() %>%
+      addCircleMarkers(lng = ~lon, 
+                       lat = ~lat, 
+                       radius = 3*crime_circles()$calc, 
+                       color = "blue",
+                       fillOpacity = 0.5,
+                       popup = ~city)
+  })
   
   # line chart for trend
   output$line_chart <- renderPlot(
@@ -113,3 +134,4 @@ server <- function(input, output) {
 
 # Run the application 
 shinyApp(ui = ui, server = server)
+
