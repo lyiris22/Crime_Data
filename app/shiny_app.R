@@ -57,6 +57,14 @@ server <- function(input, output) {
       mutate(total_pop = total_pop/1000)
   )
   
+  # get city data prepared for plotting lines
+  single_city_line <- reactive(
+    single_city_dat() %>% 
+      gather(total_pop, violent_per_100k, homs_per_100k, 
+             rape_per_100k, rob_per_100k, agg_ass_per_100k,
+             key = "type", value = "count")
+  )
+  
   # get the city rank for current year
   city_rank <- reactive(
     dat %>% 
@@ -99,12 +107,16 @@ server <- function(input, output) {
   
   # line chart for trend
   output$line_chart <- renderPlot(
-    single_city_dat() %>%
-      gather(total_pop, violent_per_100k, homs_per_100k, 
-             rape_per_100k, rob_per_100k, agg_ass_per_100k,
-             key = "type", value = "count") %>%
-      ggplot(aes(x = year, y = count, color = type)) +
-      geom_line()
+    ggplot() +
+      geom_line(data = single_city_line(), 
+                aes(x = year, y = count, color = type)) +
+      geom_bar(data = single_city_dat(), 
+               aes(x = year, y = total_pop),
+               stat="identity", fill = 'blue', alpha = 0.2) +
+      scale_color_discrete(labels = c("Aggrevated Assault", "Homicide", "Rape", "Robbery", "Population (k)", "Total Crime"), name = "" ) + 
+      theme_bw() +
+      xlab("Year") + 
+      ylab("Crime Rate per 100k People")
   )
   
   # table for percentage
