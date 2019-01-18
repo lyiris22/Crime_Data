@@ -8,13 +8,10 @@ crime$clean_city_name <- str_replace(crime$department_name,pattern=',.*$',replac
 
 clean_city_lookup <- tribble(
   ~ clean_city_name,    ~ clean_city_name_fixed,
-  "Baltimore County",  "Baltimore",
   "Fairfax County", "Fairfax",
-  "Miami-Dade County", "Miami",
   "Prince George's County" , "Upper Marlboro",
   "Suffolk County", "Hauppauge",
   "Charlotte-Mecklenburg", "Charlotte",
-  "Los Angeles County", "Los Angeles",
   "Montgomery County", "Rockville",
   "Nassau County", "Mineola"
 )
@@ -30,6 +27,11 @@ crime <- crime %>%
 
 crime_cleaned <- crime %>% 
   select('city','year','violent_per_100k','homs_per_100k','rape_per_100k','rob_per_100k','agg_ass_per_100k','total_pop') 
+
+
+# remove National rows from data set
+crime_cleaned<- crime_cleaned %>% 
+  filter(city != "National")
 
 
 # ayla's work
@@ -62,6 +64,38 @@ crime_top = read.csv('data/top_half_lat_long.csv')
 # bind top and bottom to create final cleaned data
 crime_latlong <- bind_rows(crime_top, crime_bottom)  
 
+
+#
+crime_latlong
+
+
+# these ones was wrongly geocoded had to manually enter for Cleveland lat = 41.489644, long = -81.703132
+crime_latlong <- crime_latlong %>% 
+  mutate(lon = if_else(city == "Cleveland",  -81.703132, lon)) %>% 
+  mutate(lat = if_else(city == "Cleveland",  41.489644, lat))
+
+
+# Washington, DC lat = 38.889187, long = -77.046176
+crime_latlong <- crime_latlong %>% 
+  mutate(lon = if_else(city == "Washington",  -77.046176, lon)) %>% 
+  mutate(lat = if_else(city == "Washington",  38.889187, lat))
+
+# oakland,  lat = 37.816516, long -122.282147
+
+crime_latlong <- crime_latlong %>% 
+  mutate(lon = if_else(city == "Oakland",  -122.282147, lon)) %>% 
+  mutate(lat = if_else(city == "Oakland",  37.816516, lat))
+
+
+
+
+crime_latlong
+
+
+
 write_csv(crime_latlong, 'data/crime_lat_long.csv' )
+
+
+
 
 ###
