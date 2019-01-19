@@ -1,8 +1,10 @@
 library(shiny)
 library(tidyverse)
+library(leaflet)
+library(rsconnect)
 
 # load data
-dat <- read.csv('data/crime_lat_long.csv')
+dat <- read.csv('crime_lat_long.csv')
 
 # set crimes for select box input
 crimes_list <- c("Total Crime" = "violent_per_100k",
@@ -38,6 +40,8 @@ ui <- fluidPage(
         tabPanel(title = "Map", leafletOutput("mymap")),
         tabPanel(title = "Single City",
                  plotOutput("line_chart"),
+                 "Comparisions to national average (from the data) of the current year,",
+                 "safety rank out of 67 cities:",
                  tableOutput("percentage_table"))
       )
     )
