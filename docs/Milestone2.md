@@ -1,17 +1,27 @@
+# Screenshots
+
+### Map Tab
+![](../images/screenshot_map.png)
+
+### Single City Tab
+![](../images/screenshot_line_table.png)
+
 # Rationale
 Our rationale for this app was to give users (particularly U.S. policy makers) a sense of the national crime picture over time in our Map tab, and then let them drill down and understand specific local trends for each city in our 'Single City' tab.
 
-For the Map tab, we used leaflet to plot a circle for each city in our dataset, and sized the circle by the rate of crime in that city. We allow user to filter on year (using a slider, so they can easily view trends over time) and on what type of crime they're interested in viewing (including 'Total Crime', which is all of the crime rates added together).
+For the Map tab, we used leaflet to plot a circle for each city in our dataset, and sized the circle by the rate of crime in that city. We allow user to filter on year (using a slider, so they can easily view trends over time) and filter on type of crime (homicide, robbery, etc.; we also including 'Total Crime', which is all of the crime rates added together).
 
-Once a user finds an interesting trend that they want to drill down on, they can go to the 'Single City' tab and see the crime trends over time for each city. This will allow a user to get the rest of the picture that's missing from the map tab: comparing different kinds of crime side-by-side, and getting exact numbers of the rate of each crime. We've also added a bar graph for population on the same graph because we take it to be a major factor influencing the crime rate. We also have a table at the bottom that shows the user year-over-year trends for each crime and the Safety Rank (where the city ranks in total crime for that year) for the selected city and year.
+Once a user finds an interesting trend that they want to drill down on, they can go to the 'Single City' tab and see the crime trends over time for each city. This will allow a user to get the rest of the picture that's missing from the map tab: comparing all of the different kinds of crime rates side-by-side, and getting exact numbers of the rate of each crime. We've also added a bar graph for population on the same graph because we take it to be a major factor influencing the crime rate. We also have a table at the bottom that shows the user year-over-year trends for each crime (the user can choose what year they want to look at) and the Safety Rank (where the city ranks in total crime for that year compared with all of the other cities) for the selected city and year.
 
 # Tasks
 These were the tasks at hand for Milestone 2:
+
 * Build Map tab
-    * create map of the United States and add circles to each U.S. city sized by crime rate.
+    * Create map of the United States and add circles to each U.S. city sized by crime rate.
     * Add city name to tooltip so users can confirm they're looking at the right city.
 * Build 'Single City' tab
-    * create line graph with each of the crime rates over time for each city
+    * Create line graph with each of the crime rates over time for each city.
+    * Create table with year-over-year and Safety Rank stats as described above.
 * Create Sidepanel for the ability in both tabs to filter data by year, type of crime, and city (just used for 'Single City' tab) and update plot and map accordingly.
 
 
