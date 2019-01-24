@@ -19,30 +19,45 @@ city_list <- as.list(as.vector(dat$city))
 ui <- fluidPage(
   
   # sed a title
-  titlePanel("Marshall Project Crime Database",
+  titlePanel(h2("Violent Crime Rates in the United States", align = 'center'),
              windowTitle = "Crime Data"),
   
-  # app layout
-  sidebarLayout(
-
-    sidebarPanel(
-      # slider bar: input year
-      sliderInput("year_input", "Select a year",
-                  min = 1975, max = 2014, value = 2000, sep=""),
-      # select box: crime type
-      selectInput("crime_input", "Select a crime", crimes_list),
-      # select box: input city
-      selectInput("city_input", "Select a city", city_list)
+  # new panel with two tabs
+  tabsetPanel(
+    # Map tab
+    tabPanel(
+      title = "Map",
+      sidebarLayout(
+        # siderbar for map
+        sidebarPanel(
+          sliderInput("year_input", "Select a year",
+                      min = 1975, max = 2014, value = 2000, 
+                      width = '100%', sep=""),
+          selectInput("crime_input", "Select a crime", crimes_list)
+        ),
+        # main panel for map
+        mainPanel(leafletOutput("mymap"))
+      )
     ),
-
-    mainPanel(
-      tabsetPanel(
-        tabPanel(title = "Map", leafletOutput("mymap")),
-        tabPanel(title = "Single City",
-                 plotOutput("line_chart"),
-                 "Comparisions to national average (from the data) of the current year,",
-                 "safety rank out of 67 cities:",
-                 tableOutput("percentage_table"))
+    # Chart tab
+    tabPanel(
+      title = "Single City",
+      sidebarLayout(
+        # sidebar for chart, input name changed
+        sidebarPanel(
+          sliderInput("year_input_chart", "Select a year",
+                      min = 1975, max = 2014, value = 2000, 
+                      width = '100%', sep=""),
+          selectInput("city_input", "Select a city", 
+                      selected = as.factor(levels(city_list)[1]), city_list)
+        ),
+        # main panel
+        mainPanel(
+          plotOutput("line_chart"),
+          "Comparisions to national average (from the data) of the current year,",
+          "safety rank out of 67 cities:",
+          tableOutput("percentage_table")
+        )
       )
     )
   )
@@ -72,7 +87,7 @@ server <- function(input, output) {
   # get the city rank for current year
   city_rank <- reactive(
     dat %>% 
-      filter(year == input$year_input) %>%
+      filter(year == input$year_input_chart) %>%
       mutate(Rank = dense_rank(violent_per_100k)) %>% 
       filter(city == input$city_input)
     )
@@ -80,7 +95,7 @@ server <- function(input, output) {
   # get the average table for current year
   avg <- reactive(
     dat %>% 
-      filter(year == input$year_input) %>% 
+      filter(year == input$year_input_chart) %>% 
       group_by(year) %>% 
       summarise(homs = mean(homs_per_100k, na.rm = TRUE),
                 rape = mean(rape_per_100k, na.rm = TRUE),
@@ -126,7 +141,7 @@ server <- function(input, output) {
   # table for percentage
   output$percentage_table <- renderTable(
     single_city_dat() %>% 
-      filter(year == input$year_input) %>% 
+      filter(year == input$year_input_chart) %>% 
       # calculate average compare to national and add % to the end
       mutate(homs_per_100k = paste(round((homs_per_100k - avg()$homs)/100, 
                                          digits = 2), "%"),
