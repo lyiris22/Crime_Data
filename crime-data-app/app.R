@@ -2,6 +2,8 @@ library(shiny)
 library(tidyverse)
 library(leaflet)
 library(rsconnect)
+library(shinythemes)
+library(DT)
 
 # load data
 dat <- read.csv('crime_lat_long.csv')
@@ -15,11 +17,20 @@ crimes_list <- c("Total Crime" = "violent_per_100k",
 # get cities for select box input
 city_list <- as.list(as.vector(dat$city))
 
+# function to take the nth tick mark
+every_nth = function(n) {
+  return(function(x) {x[c(TRUE, rep(FALSE, n - 1))]})
+}
+
+
 # main structure
 ui <- fluidPage(
   
+  #set theme
+  theme = shinytheme("flatly"),
+  
   # sed a title
-  titlePanel(h2("Violent Crime Rates in the United States", align = 'center'),
+  titlePanel(h1("Violent Crime Rates in the United States", align = 'center'),
              windowTitle = "Crime Data"),
   
   # new panel with two tabs
@@ -33,7 +44,7 @@ ui <- fluidPage(
           sliderInput("year_input", "Select a year",
                       min = 1975, max = 2014, value = 2000, 
                       width = '100%', sep=""),
-          selectInput("crime_input", "Select a crime", crimes_list)
+          selectInput("crime_input", "Select a Crime", crimes_list)
         ),
         # main panel for map
         mainPanel(leafletOutput("mymap"))
@@ -45,20 +56,37 @@ ui <- fluidPage(
       sidebarLayout(
         # sidebar for chart, input name changed
         sidebarPanel(
-          sliderInput("year_input_chart", "Select a year",
-                      min = 1975, max = 2014, value = 2000, 
-                      width = '100%', sep=""),
           selectInput("city_input", "Select a city", 
-                      selected = as.factor(levels(city_list)[1]), city_list)
+                      selected = as.factor(levels(city_list)[1]), city_list),
+          checkboxGroupInput("crime_checks", "Select a Crime", crimes_list)
         ),
         # main panel
         mainPanel(
           plotOutput("line_chart"),
-          "Comparisions to national average (from the data) of the current year,",
-          "safety rank out of 67 cities:",
-          tableOutput("percentage_table")
+          "",
+          h4("Comparisions from the National Average and City Safety Ranking"),
+          dataTableOutput("percentage_table")
         )
       )
+    ),
+    tabPanel(
+    title = "Info",
+    sidebarLayout(
+      # sidebar for chart, input name changed
+      sidebarPanel(
+       ),
+      # main panel
+      mainPanel(
+        h6("This app allows you to compare violent crime rates from 1975 to 2015 for various cities across the United States.
+        The data for this app has been sourced from the Marshall Project and contains population data and four type of violent crimes: homicide, rape, robbery, 
+        and aggravated assault."),
+        h5("Map"),
+        h6("Use the slide bar to select a single year by sliding it back and forth. Each crime type can be selected individually by ticking the checkbox, if multiple boxes are selected the crimes rates will combine to the total crime rate."), 
+        
+        h5("Single City"),
+        h6("Select a different city from the drop-down menu and control which lines are drawn by selecting the crime checkbox. The table displays the difference from the national average, the national average used here was calculated only from the cities in this data set. An overall safety ranking out of 67 based on the total crime rate for that year.") 
+      )
+     )
     )
   )
 )
@@ -87,15 +115,16 @@ server <- function(input, output) {
   # get the city rank for current year
   city_rank <- reactive(
     dat %>% 
-      filter(year == input$year_input_chart) %>%
+      group_by(year) %>%
       mutate(Rank = dense_rank(violent_per_100k)) %>% 
       filter(city == input$city_input)
     )
+
+  
   
   # get the average table for current year
   avg <- reactive(
     dat %>% 
-      filter(year == input$year_input_chart) %>% 
       group_by(year) %>% 
       summarise(homs = mean(homs_per_100k, na.rm = TRUE),
                 rape = mean(rape_per_100k, na.rm = TRUE),
@@ -128,20 +157,26 @@ server <- function(input, output) {
   output$line_chart <- renderPlot(
     ggplot() +
       geom_line(data = single_city_line(), 
-                aes(x = year, y = count, color = type)) +
+                aes(x = year, y = count, color = type), size=1) +
       geom_bar(data = single_city_dat(), 
                aes(x = year, y = total_pop),
-               stat="identity", fill = 'blue', alpha = 0.2) +
+               stat="identity", fill = 'slategray1',alpha = 0.2) +
       scale_color_discrete(labels = c("Aggrevated Assault", "Homicide", "Rape", "Robbery", "Population (k)", "Total Crime"), name = "" ) + 
       theme_bw() +
+      theme(axis.text.x=element_text(size=13),
+            axis.text.y=element_text(size=13),
+            axis.title.x=element_text(size=16),
+            axis.title.y=element_text(size=16),
+            legend.text=element_text(size=16) 
+           )+
+      scale_x_discrete(limit=c(1975:2015),  breaks = every_nth(n = 5))+
       xlab("Year") + 
       ylab("Crime Rate per 100k People")
   )
   
   # table for percentage
-  output$percentage_table <- renderTable(
-    single_city_dat() %>% 
-      filter(year == input$year_input_chart) %>% 
+  output$percentage_table <- renderDataTable({
+    DT::datatable(single_city_dat() %>% 
       # calculate average compare to national and add % to the end
       mutate(homs_per_100k = paste(round((homs_per_100k - avg()$homs)/100, 
                                          digits = 2), "%"),
@@ -158,8 +193,9 @@ server <- function(input, output) {
              "Rape" = rape_per_100k,
              "Robbery" = rob_per_100k,
              "Aggrevated Assault" = agg_ass_per_100k,
-             "Safety Rank" = rank)
-  )
+             "Safety Rank" = rank),
+      options = list(lengthMenu = c(5, 10, 15), pageLength = 5))
+  })
   
 }
 
