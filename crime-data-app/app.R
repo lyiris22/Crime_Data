@@ -9,11 +9,16 @@ library(DT)
 dat <- read.csv('crime_lat_long.csv')
 
 # set crimes for select box input
-crimes_list <- c("Total Crime" = "violent_per_100k",
+crimes_list <- c(#"Total Crime" = "violent_per_100k",
                  "Homicide" = "homs_per_100k",
                  "Rape" = "rape_per_100k",
                  "Robbery" = "rob_per_100k",
                  "Aggrevated Assault" = "agg_ass_per_100k")
+
+# set crimes for checker box input
+crimes_checker <- c('Homicide', 'Rape', 'Robbery', 'Aggrevated Assault')
+
+
 # get cities for select box input
 city_list <- as.list(as.vector(dat$city))
 
@@ -59,7 +64,9 @@ ui <- fluidPage(
         sidebarPanel(
           selectInput("city_input", "Select a city", 
                       selected = as.factor(levels(city_list)[1]), city_list),
-          checkboxGroupInput("crime_checks", "Select a Crime", crimes_list)
+          checkboxGroupInput("crime_checks", "Select a Crime", crimes_checker,
+                             selected = crimes_checker),
+          checkboxInput("pop_check", "Show population", value = FALSE)
         ),
         # main panel
         mainPanel(
@@ -105,12 +112,23 @@ server <- function(input, output) {
       mutate(total_pop = total_pop/1000)
   )
   
+  # get the boolean for showing the popultion or not
+  pop_switch <- reactive(
+    input$pop_check
+  )
+  
   # get city data prepared for plotting lines
   single_city_line <- reactive(
     single_city_dat() %>% 
-      gather(total_pop, violent_per_100k, homs_per_100k, 
-             rape_per_100k, rob_per_100k, agg_ass_per_100k,
-             key = "type", value = "count")
+      rename('Total Crimes' = violent_per_100k,
+             'Homicide' = homs_per_100k,
+             'Rape' = rape_per_100k, 
+             'Robbery' = rob_per_100k, 
+             'Aggrevated Assault' = agg_ass_per_100k) %>% 
+      gather(total_pop, 'Total Crimes', 'Homicide', 'Rape', 
+             'Robbery', 'Aggrevated Assault',
+             key = "type", value = "count") %>% 
+      filter(type %in% c('Total Crimes', input$crime_checks))
   )
   
   # get the city rank for current year
@@ -170,25 +188,39 @@ server <- function(input, output) {
   })
   
   
-  # line chart for trend
-  output$line_chart <- renderPlot(
+  # build the line chart
+  lines <- reactive(
     ggplot() +
       geom_line(data = single_city_line(), 
                 aes(x = year, y = count, color = type), size=1) +
-      geom_bar(data = single_city_dat(), 
-               aes(x = year, y = total_pop),
-               stat="identity", fill = 'slategray1',alpha = 0.2) +
-      scale_color_discrete(labels = c("Aggrevated Assault", "Homicide", "Rape", "Robbery", "Population (k)", "Total Crime"), name = "" ) + 
+      #scale_color_discrete(labels = c("Aggrevated Assault", "Homicide", "Rape", "Robbery", "Total Crime"), name = "" ) + 
       theme_bw() +
       theme(axis.text.x=element_text(size=13),
             axis.text.y=element_text(size=13),
             axis.title.x=element_text(size=16),
             axis.title.y=element_text(size=16),
             legend.text=element_text(size=16) 
-           )+
+      )+
       scale_x_discrete(limit=c(1975:2015),  breaks = every_nth(n = 5))+
       xlab("Year") + 
       ylab("Crime Rate per 100k People")
+  )
+  
+  # decide whether to add population or not
+  final_lines <- reactive(
+    if (input$pop_check){
+      lines() + 
+        geom_bar(data = single_city_dat(), 
+                 aes(x = year, y = total_pop),
+                 stat="identity", fill = 'slategray1',alpha = 0.5)
+    } else {
+      lines()
+    }
+  )
+  
+  # line chart for trend
+  output$line_chart <- renderPlot(
+    final_lines()
   )
   
   # table for percentage
