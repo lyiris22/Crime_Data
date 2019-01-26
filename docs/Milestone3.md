@@ -32,21 +32,20 @@ the bars on our plot.
 
 ### Reflection on how your project has changed since Milestone 2, and why
 
-Our app has become more functional and improved the overall design since Milestone 2. We felt the feedback was very helpful in shaping our app to be better.
+Our app has become more functional and visually appealing since Milestone 2. We felt the feedback was very helpful in shaping our app to be better.
 We added an Help tab to contain information about the data set and to provide simple instructions on how to use the app.
 
 We removed the widgets on each tab that didn't function, which meant removing the
 select a city widget from the Map tab and we removed the year slider widget from the
 single city tab. We tried to changed the style of the year slide bar since in our feedback session
-several reviews thought it was displaying a range, but was not able to find a way to style it differently. We updated the Map tab
+several reviews thought it was displaying a range, but we were not able to find a way to style it differently. We updated the Map tab
 so when you hover over the city it display the values for the crime rates and the city names, which is much more intuitive then clicking. We did not change the
 colour of the circles on the map but did make them more transparent so you can see overlapping data better.
 
 On the Single City tab we changed
 the crime type from a dropdown widget to check-box widget to make the plot more interactive, we also hoping this will help solve
 some of the confusion around the style we have chosen to display population. During the feedback session we received lots of feedback about
-placing population on a separate plot but we did not wat to do this as we wanted population will the crime rates so the user
-can easily see if the crime rates are changing due to changes in the population. We are hoping the new style of selecting population and now
-the plot drawing it one will help to solve the confusion users had. We were surprised we
-didn't receive more feedback on the table but we noticed people barely even noticed the table. So we made large changes to the table to make
+placing population on a separate plot but we did not do this as we wanted population and the crime rates together so the user
+can easily see if the crime rates are changing due to changes in the population. We are hoping the new style of selecting population and having it interactively drawn on the plot will help to solve the confusion users had. We were surprised we
+didn't receive more feedback on the table but found people barely even noticed the table. So we made changed the table to make
 it stand out more. We improved the overall design appeal of our app by adding a theme and increasing the font sizes.
