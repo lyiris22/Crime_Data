@@ -16,7 +16,7 @@ and easy to use.
 With the Map tab a consistent piece of feedback we received was having
 the single city drop down widget present when it didn't change the map, this was a known
 issue before the feedback session and was not surprising that users found this frustrating.
-A piece of feedback that we received from several reviewers was the year slide bar widget looked like a range
+A piece of feedback that we received from several reviewers was the year slider widget looked like a range
 which was something we did not expect users to say. This piece of feedback was very helpful as we realized our design wasn't as intuitive as
 we had thought. We had a few suggestions to changes the style of our crime rate
 circles on the map. Another piece of consistent feedback was providing more
@@ -24,9 +24,9 @@ info about crime rate circles by adding more detail to the tool tip and to add a
 circle size. We found users didn't know you could click on the circles to find out the city name.
 
 ##### Single City
-For the Single City tab the main piece of feedback was about removing the widget that didn't change anything on the tab.
+For the Single City tab the main piece of feedback was about removing the widgets that didn't change anything on the tab.
 We received comments about our plot not displaying when the tab was first selected and several of our reviewers commented on being confused about
-the bars on the plot.
+what the bars on the plot were displaying.
 
 
 
@@ -37,9 +37,10 @@ We added an Help tab to contain information about the data set and to provide si
 
 We removed the widgets on each tab that didn't function, which meant removing the
 select a city widget from the Map tab. We tried to changed the style of the year slider since in our feedback session
-several reviews thought it was displaying a range, but we were not able to find a way to style it differently. We updated the Map tab
-so when you hover over the city it display the values for the crime rates and the city names, which is much more intuitive then clicking and gives the user an idea of the scale. We did change the style
- of the circles on the map by making them more transparent so you can see overlapping data better.
+several reviewers thought it was displaying a range, but we were not able to find a way to style it differently. We updated the Map tab
+so when you hover over the city it display the values for the crime rates and the city names, which is much more intuitive then clicking. We did change the style
+ of the circles on the map by making them more transparent so you can see overlapping data better. A big change to the Map tab was changing the crime rates from a drop down menu
+ to a checkbox where now the crime rates will add up as more are selected. 
 
 On the Single City tab we removed the year slider widget and changed the crime type from a dropdown widget to check-box widget to make the plot more interactive, we are also hoping this will help solve
 some of the confusion around the style we have chosen to display population. During the feedback session we received lots of feedback about
