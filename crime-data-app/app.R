@@ -44,7 +44,8 @@ ui <- fluidPage(
           sliderInput("year_input", "Select a year",
                       min = 1975, max = 2014, value = 2000, 
                       width = '100%', sep=""),
-          selectInput("crime_input", "Select a Crime", crimes_list)
+          #selectInput("crime_input", "Select a Crime", crimes_list)
+          checkboxGroupInput("crime_input", "Select a Crime", crimes_list, selected='homs_per_100k')
         ),
         # main panel for map
         mainPanel(leafletOutput("mymap"))
@@ -140,18 +141,34 @@ server <- function(input, output) {
       mutate(calc = (.[[1]]-mean(.[[1]],na.rm = TRUE))/sd(.[[1]],na.rm=TRUE))
   )
 
+  dat_year <- reactive(
+    dat %>% filter(year==input$year_input)
+  )
+    
+  labs <- lapply(seq(nrow(dat)), function(i) {
+    #z <- dat %>% filter(year==input$year_input)
+    paste0( '<p>', dat[i, "city"], '<p></p>', 
+#            'Total Crime (per 100k): ', round(z[i, "violent_per_100k"]),'</p><p>', 
+#            'Homicide (per 100k): ', round(dat[i, "violent_per_100k"]),'</p><p>', 
+#            'Rape (per 100k): ', round(dat[i, "violent_per_100k"]),'</p><p>', 
+#            'Robbery (per 100k: ', round(dat[i, "violent_per_100k"]),'</p><p>', 
+#            'Assault (per 100k): ', round(dat[i, "violent_per_100k"]),'</p><p>', 
+            dat[i,'violent_per_100k'], '</p>' ) 
+  })
+
   
   # Map output
   output$mymap <- renderLeaflet({
-    leaflet(dat) %>%
+    leaflet(dat_year()) %>%
       addTiles() %>%
       addCircleMarkers(lng = ~lon, 
                        lat = ~lat, 
                        radius = 3*crime_circles()$calc, 
                        color = "blue",
                        fillOpacity = 0.5,
-                       popup = ~city)
+                       label = lapply(labs, HTML))
   })
+  
   
   # line chart for trend
   output$line_chart <- renderPlot(
