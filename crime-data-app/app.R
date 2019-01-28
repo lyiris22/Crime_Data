@@ -4,13 +4,13 @@ library(leaflet)
 library(rsconnect)
 library(shinythemes)
 library(DT)
+library(plotly)
 
 # load data
 dat <- read.csv('crime_lat_long.csv')
 
 # set crimes for select box input
-crimes_list <- c(#"Total Crime" = "violent_per_100k",
-                 "Homicide" = "homs_per_100k",
+crimes_list <- c("Homicide" = "homs_per_100k",
                  "Rape" = "rape_per_100k",
                  "Robbery" = "rob_per_100k",
                  "Aggrevated Assault" = "agg_ass_per_100k")
@@ -75,9 +75,10 @@ ui <- fluidPage(
         ),
         # main panel
         mainPanel(
-          plotOutput("line_chart"),
-          "",
-          h4("Comparisions from the National Average and City Safety Ranking"),
+          plotlyOutput("line_chart"),
+          tags$hr(), # add a line to separate
+          h4("Comparisions from the National Average and City Safety Ranking",
+             align = 'center'),
           dataTableOutput("percentage_table")
         )
       )
@@ -125,15 +126,15 @@ server <- function(input, output) {
   # get city data prepared for plotting lines
   single_city_line <- reactive(
     single_city_dat() %>% 
-      rename('Total Crimes' = violent_per_100k,
+      rename('Total Violent Crimes' = violent_per_100k,
              'Homicide' = homs_per_100k,
              'Rape' = rape_per_100k, 
              'Robbery' = rob_per_100k, 
              'Aggrevated Assault' = agg_ass_per_100k) %>% 
-      gather(total_pop, 'Total Crimes', 'Homicide', 'Rape', 
+      gather(total_pop, 'Total Violent Crimes', 'Homicide', 'Rape', 
              'Robbery', 'Aggrevated Assault',
              key = "type", value = "count") %>% 
-      filter(type %in% c('Total Crimes', input$crime_checks))
+      filter(type %in% c('Total Violent Crimes', input$crime_checks))
   )
   
   # get the city rank for current year
@@ -143,8 +144,6 @@ server <- function(input, output) {
       mutate(Rank = dense_rank(violent_per_100k)) %>% 
       filter(city == input$city_input)
     )
-
-  
   
   # get the average table for current year
   avg <- reactive(
@@ -192,19 +191,22 @@ server <- function(input, output) {
                        )
   })
   
-  
   # build the line chart
   lines <- reactive(
     ggplot() +
       geom_line(data = single_city_line(), 
-                aes(x = year, y = count, color = type), size=1) +
-      #scale_color_discrete(labels = c("Aggrevated Assault", "Homicide", "Rape", "Robbery", "Total Crime"), name = "" ) + 
+                aes(x = year, y = count, color = type), size=0.5) +
+      scale_color_manual(values = c("Aggrevated Assault" = '#a6d854',
+                                    "Homicide" = '#fc8d62', 
+                                    "Rape" = '#4363d8', 
+                                    "Robbery" = '#e78ac3', 
+                                    "Total Violent Crimes" = '#e6194b'), name = "") + 
       theme_bw() +
-      theme(axis.text.x=element_text(size=13),
-            axis.text.y=element_text(size=13),
-            axis.title.x=element_text(size=16),
-            axis.title.y=element_text(size=16),
-            legend.text=element_text(size=16) 
+      theme(axis.text.x=element_text(size=8),
+            axis.text.y=element_text(size=8),
+            axis.title.x=element_text(size=10),
+            axis.title.y=element_text(size=10),
+            legend.text=element_text(size=8) 
       )+
       scale_x_discrete(limit=c(1975:2015),  breaks = every_nth(n = 5))+
       xlab("Year") + 
@@ -224,7 +226,7 @@ server <- function(input, output) {
   )
   
   # line chart for trend
-  output$line_chart <- renderPlot(
+  output$line_chart <- renderPlotly(
     final_lines()
   )
   

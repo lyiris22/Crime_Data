@@ -5,6 +5,6 @@ account: lyiris22
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 655040
-bundleId: 1823342
+bundleId: 1838858
 url: https://lyiris22.shinyapps.io/crime-data-app/
-when: 1547861691.06993
+when: 1548537639.97131
