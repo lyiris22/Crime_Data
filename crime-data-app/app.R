@@ -75,7 +75,7 @@ ui <- fluidPage(
         # main panel
         mainPanel(
           plotlyOutput("line_chart"),
-          tags$hr(), # add a line to separate
+          hr(),
           h4("Comparisions from the National Average and City Safety Ranking",
              align = 'center'),
           dataTableOutput("percentage_table")
@@ -84,22 +84,20 @@ ui <- fluidPage(
     ),
     tabPanel(
     title = "Help",
-    sidebarLayout(
-      # sidebar for chart, input name changed
-      sidebarPanel(
-       ),
-      # main panel
-      mainPanel(
-        h6("This app allows you to compare violent crime rates from 1975 to 2014 for various cities across the United States.
-        The data for this app has been sourced from the Marshall Project and contains population data and violent crimes rates for homicide, rape, robbery, 
-        and aggravated assault. With the different tabs you are able to compare national and municipal level data"),
-        h5("Map"),
-        h6("Use the slide bar to select a single year by sliding it back and forth, you can click the play button for the slider to play through all the years. Each crime type can be selected individually by ticking the checkbox, if multiple boxes are selected the crimes rates will combine to the total crime rate, the default is having all the crimes selected which shows the total crime rate"), 
-        
-        h5("Single City"),
-        h6("Select a different city from the drop-down menu and control which lines are drawn by selecting the crime checkbox, the default has all crime types selected. The table displays the difference from the national average, the national average used here was calculated from this data set. An overall safety ranking out of 67 based on the total crime rate for that year.") 
-      )
-     )
+    fluidRow(
+      column(3),
+      column(6,
+             h5("This app allows you to compare violent crime rates from 1975 to 2014 for various cities across the United States.
+                The data for this app has been sourced from the Marshall Project and contains population data and violent crimes rates for homicide, rape, robbery, 
+                and aggravated assault. With the different tabs you are able to compare national and municipal level data."),
+             hr(),
+             h4("Map"),
+             h5("Use the slide bar to select a single year by sliding it back and forth, you can click the play button for the slider to play through all the years. Each crime type can be selected individually by ticking the checkbox, if multiple boxes are selected the crimes rates will combine to the total crime rate, the default is having all the crimes selected which shows the total crime rate."), 
+             hr(),
+             h4("Single City"),
+             h5("Select a different city from the drop-down menu and control which lines are drawn by selecting the crime checkbox, the default has all crime types selected. The table displays the difference from the national average, the national average used here was calculated from this data set. An overall safety ranking out of 67 based on the total crime rate for that year.") 
+             ),
+      column(3))
     )
   )
 )
