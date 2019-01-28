@@ -27,6 +27,16 @@ every_nth = function(n) {
   return(function(x) {x[c(TRUE, rep(FALSE, n - 1))]})
 }
 
+# change the color of the slider input
+mycss <- "
+.irs-bar,
+.irs-bar-edge,
+.irs-single,
+.irs-grid-pol {
+background: red;
+border-color: white;
+}"
+
 
 # main structure
 ui <- fluidPage(
@@ -46,6 +56,7 @@ ui <- fluidPage(
       sidebarLayout(
         # siderbar for map
         sidebarPanel(
+          tags$style(mycss),
           sliderInput("year_input", "Select a year",
                       min = 1975, max = 2014, value = 2000, 
                       width = '100%', sep="", animate=TRUE),
