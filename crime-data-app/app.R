@@ -46,9 +46,10 @@ ui <- fluidPage(
       sidebarLayout(
         # siderbar for map
         sidebarPanel(
+          
           sliderInput("year_input", "Select a year",
                       min = 1975, max = 2014, value = 2000, 
-                      width = '100%', sep="", animate=TRUE),
+                      width = '100%', sep="", animate=animationOptions(interval=700, loop=TRUE)),
           #selectInput("crime_input", "Select a Crime", crimes_list)
           checkboxGroupInput("crime_input", 
                              "Select a Crime", 
